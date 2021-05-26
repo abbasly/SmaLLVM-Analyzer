@@ -1,0 +1,2 @@
+Potential Division-by-zero @ example1.c:main:7:12, %call = Top
+Potential Division-by-zero @ example1.c:main:14:10, %call = Top

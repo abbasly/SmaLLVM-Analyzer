@@ -1,0 +1,1 @@
+Potential Tainted-flow @ example5.c:main:12:3 (call void @sink(i32 %y.0), !dbg !23)

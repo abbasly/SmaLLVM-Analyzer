@@ -1,0 +1,2 @@
+Potential Division-by-zero @ example3.c:main:10:10, %sub = Top
+Potential Division-by-zero @ example3.c:main:11:10, %i.0 = Top

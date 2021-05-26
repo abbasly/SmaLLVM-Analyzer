@@ -1,0 +1,59 @@
+(rule
+ (deps example1.ll)
+ (action
+  (with-stdout-to
+   example1.output
+   (run ../analyzer sign example1.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff example1.expected example1.output)))
+
+(rule
+ (deps example2.ll)
+ (action
+  (with-stdout-to
+   example2.output
+   (run ../analyzer sign example2.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff example2.expected example2.output)))
+
+(rule
+ (deps example3.ll)
+ (action
+  (with-stdout-to
+   example3.output
+   (run ../analyzer sign example3.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff example3.expected example3.output)))
+
+(rule
+ (deps example4.ll)
+ (action
+  (with-stdout-to
+   example4.output
+   (run ../analyzer taint example4.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff example4.expected example4.output)))
+
+(rule
+ (deps example5.ll)
+ (action
+  (with-stdout-to
+   example5.output
+   (run ../analyzer taint example5.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff example5.expected example5.output)))

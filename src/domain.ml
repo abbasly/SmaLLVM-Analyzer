@@ -142,29 +142,318 @@ module Sign : SIGN = struct
 
   let top = Top
 
-  let of_src = failwith "Not implemented"
+  let of_src = Top
 
-  let of_sanitizer = failwith "Not implemented"
+  let of_sanitizer = Top
 
-  let order x y = failwith "Not implemented"
+  let order x y = match (x, y) with
+    | Zero, Zero -> true
+    | Pos, Pos -> true
+    | Neg, Neg -> true
+    | Bot, _ -> true
+    | _, Top -> true
+    | _, Bot -> false
+    | Top, _ -> false
+    | _ -> false
 
-  let join x y = failwith "Not implemented"
+  let join x y = match (x, y) with
+    | _ -> Top
+    | Zero, Zero -> Zero
+    | Bot, Pos -> Pos
+    | Pos, Bot -> Pos
+    | Pos, Pos -> Pos
+    | Neg, Neg -> Neg
+    | Bot, Zero -> Zero
+    | Zero, Bot -> Zero
+    | Neg, Bot -> Neg
+    | Bot, Neg -> Neg
+    | _, Top -> Top
+    | Top, _ -> Top
+    
 
-  let meet x y = failwith "Not implemented"
+  let meet x y = match (x, y) with
+    | _ -> Bot
+    | Bot, _ -> Bot
+    | _, Bot -> Bot
+    | Pos, Pos -> Pos
+    | Neg, Neg -> Neg
+    | Zero, Zero -> Zero
+    | Top, n -> n
+    | n, Top -> n
+    
 
-  let of_int i = failwith "Not implemented"
+  let of_int i = if i < 0 then Neg
+    else if i > 0 then Pos
+    else Zero
 
-  let add v1 v2 = failwith "Not implemented"
+  let add v1 v2 = match (v1, v2) with
+    | Zero, Zero -> Zero
+    | Neg, Zero -> Neg
+    | Zero, Neg -> Neg
+    | Pos, Pos -> Pos
+    | Neg, Neg -> Neg
+    | Pos, Zero -> Pos
+    | Zero, Pos -> Pos
+    | _, Bot -> Bot
+    | Bot, _ -> Bot
+    | _ -> Top
 
-  let sub v1 v2 = failwith "Not implemented"
+  let sub v1 v2 = match (v1, v2) with
+    | Zero, Zero -> Zero
+    | Neg, Zero -> Neg
+    | Zero, Neg -> Pos
+    | Pos, Neg -> Pos
+    | Neg, Pos -> Neg
+    | Pos, Zero -> Pos
+    | Zero, Pos -> Neg
+    | Bot, _ -> Bot
+    | _, Bot -> Bot
+    | _ -> Top
 
-  let mul v1 v2 = failwith "Not implemented"
+  let mul v1 v2 = match (v1, v2) with
+    | _, Bot -> Bot
+    | Bot, _ -> Bot
+    | Zero, _ -> Zero
+    | _, Zero -> Zero
+    | Neg, Neg -> Pos
+    | Pos, Pos -> Pos
+    | Neg, Pos -> Neg
+    | Pos, Neg -> Neg
+    | _ -> Top
 
-  let div v1 v2 = failwith "Not implemented"
+  let div v1 v2 = match (v1, v2) with
+    | Neg, Neg -> Neg
+    | Pos, Pos -> Pos
+    | Neg, Pos -> Neg
+    | Pos, Neg -> Neg
+    | _, Bot -> Bot
+    | Bot, _ ->  Bot
+    | Zero, _ -> Zero
+    | _, Zero -> Bot
+    | _ -> Top
 
-  let cmp pred v1 v2 = failwith "Not implemented"
+  let cmp pred v1 v2 = match pred with
+    | Llvm.Icmp.Eq ->
+      (match (v1, v2) with
+      | Zero, Zero -> Pos
+      | Pos, Pos -> Top
+      | Neg, Neg -> Top
+      | _, Top -> Top
+      | Top, _ -> Top
+      | Bot, _ -> Bot
+      | _, Bot -> Bot
+      | _ -> Zero)
+    | Llvm.Icmp.Ne ->
+      (match (v1, v2) with
+      | Zero, Zero -> Zero
+      | Pos, Pos -> Top
+      | Neg, Neg -> Top
+      | Bot, _ -> Bot
+      | _, Bot -> Bot
+      | Top, _ -> Top
+      | _, Top -> Top
+      | _ -> Pos)
+    | Llvm.Icmp.Ult | Llvm.Icmp.Slt ->
+      (match (v1, v2) with
+      | Top, _ -> Top
+      | _, Top -> Top
+      | Bot, _ -> Bot
+      | _, Bot -> Bot
+      | Neg, Pos -> Pos
+      | Neg, Neg -> Top
+      | Zero, Neg -> Zero
+      | Neg, Zero -> Pos
+      | Zero, Zero -> Zero
+      | Pos, Neg -> Zero
+      | Zero, Pos -> Pos
+      | Pos, Zero -> Zero
+      | Pos, Pos -> Top)
+    | Llvm.Icmp.Sgt ->
+      (match (v1, v2) with
+      | Neg, Neg -> Top
+      | Pos, Pos -> Top
+      | Zero, Zero -> Zero
+      | Bot, _ -> Bot
+      | _, Bot -> Bot
+      | Top, _ -> Top
+      | _, Top -> Top
+      | _, Pos -> Zero
+      | Zero, _ -> Pos
+      | Pos, _ -> Pos
+      | _, Zero -> Zero)
+    | Llvm.Icmp.Ugt  ->
+      (match (v1, v2) with
+      | Neg, Neg -> Top
+      | Pos, Pos -> Top
+      | Zero, Zero -> Zero
+      | Bot, _ -> Bot
+      | _, Bot -> Bot
+      | Top, _ -> Top
+      | _, Top -> Top
+      | _, Pos -> Zero
+      | Zero, _ -> Pos
+      | Pos, _ -> Pos
+      | _, Zero -> Zero)
+    | Llvm.Icmp.Uge | Llvm.Icmp.Sge ->
+      (match (v1, v2) with
+      | Bot, _ -> Bot
+      | _, Bot -> Bot
+      | Top, _ -> Top
+      | _, Top -> Top
+      | Neg, Pos -> Zero
+      | Neg, Neg -> Top
+      | Neg, Zero -> Zero
+      | Zero, Pos -> Zero
+      | Zero, Neg -> Pos
+      | Pos, Zero -> Pos
+      | Zero, Zero -> Pos
+      | Pos, Pos -> Top
+      | Pos, Neg -> Pos)
+    
+    | Llvm.Icmp.Ule | Llvm.Icmp.Sle ->
+      (match (v1, v2) with
+      | Top, _ -> Top
+      | _, Top -> Top
+      | Bot, _ -> Bot
+      | _, Bot -> Bot 
+      | Neg, Neg -> Top
+      | Zero, Zero -> Pos
+      | Zero, Pos -> Pos
+      | Neg, Zero -> Pos
+      | Neg, Pos -> Pos
+      | Zero, Neg -> Zero
+      | Pos, Zero -> Zero
+      | Pos, Neg -> Zero
+      | Pos, Pos -> Top)
 
-  let filter pred v1 v2 = failwith "Not implemented"
+  let filter pred v1 v2 = match pred with
+    | Llvm.Icmp.Eq ->
+      (match (v1, v2) with
+      | Bot, _ -> Bot
+      | _, Bot -> Bot
+      | Neg, Pos -> Bot
+      | Neg, Neg -> Neg
+      | Neg, Zero -> Bot
+      | Pos, Zero -> Bot
+      | Neg, Top -> Neg
+      | Pos, Pos -> Pos
+      | Pos, Top -> Pos
+      | Zero, Neg -> Bot
+      | Pos, Neg -> Bot
+      | Top, Pos -> Pos
+      | Zero, Zero -> Zero
+      | Zero, Top -> Zero
+      | Zero, Pos -> Bot
+      | Top, Zero -> Zero 
+      | Top, Neg -> Neg
+      | Top, Top -> Top
+      )
+    | Llvm.Icmp.Ugt | Llvm.Icmp.Sgt ->
+      (match (v1, v2) with
+      | _, Bot -> Bot
+      | Bot, _ -> Bot
+      | Neg, Pos -> Bot
+      | Neg, Zero -> Bot
+      
+      | Neg, Neg -> Neg
+      | Pos, Neg -> Pos
+      | Pos, Pos -> Pos
+      | Neg, Top -> Neg
+      | Pos, Zero -> Pos
+      | Zero, Top -> Zero
+      | Top, Zero -> Pos
+      | Top, Pos -> Pos
+      | Pos, Top -> Pos
+      | Zero, Neg -> Zero
+      | Zero, Pos -> Bot
+      | Zero, Zero -> Bot
+      | Top, Neg -> Top
+      | Top, Top -> Top
+      )
+    | Llvm.Icmp.Ne ->
+      (match (v1, v2) with
+      | Bot, _ -> Bot
+      | _, Bot -> Bot
+      | Neg, Pos -> Neg
+      | Zero, Top -> Zero
+      | Pos, Pos -> Pos
+      | Pos, Top -> Pos
+      | Neg, Neg -> Neg
+      | Neg, Top -> Neg
+      | Pos, Zero -> Pos
+      | Pos, Neg -> Pos
+      | Neg, Zero -> Neg
+      | Zero, Neg -> Zero
+      | Zero, Pos -> Zero
+      | Zero, Zero -> Bot
+      | Top, Neg -> Neg
+      | Top, Zero -> Zero
+      | Top, Pos -> Pos 
+      | Top, Top -> Top
+      )
+    | Llvm.Icmp.Ult | Llvm.Icmp.Slt ->
+      (match (v1, v2) with
+      | Bot, _ -> Bot
+      | _, Bot -> Bot
+      | Neg, Zero -> Neg
+      | Neg, Pos -> Neg
+      | Zero, Zero -> Bot
+      | Zero, Top -> Zero
+      | Neg, Neg -> Neg
+      | Pos, Zero -> Bot
+      | Neg, Top -> Neg
+      | Pos, Neg -> Bot
+      | Pos, Pos -> Pos
+      | Top, Pos -> Top
+      | Top, Neg -> Neg
+      | Pos, Top -> Pos
+      | Zero, Neg -> Bot
+      | Zero, Pos -> Zero
+      | Top, Zero -> Neg
+      | Top, Top -> Top
+      )
+    | Llvm.Icmp.Uge | Llvm.Icmp.Sge ->
+      (match (v1, v2) with
+      | Bot, _ -> Bot
+      | _, Bot -> Bot 
+      | Neg, Pos -> Bot
+      | Neg, Neg -> Neg
+      | Pos, Top -> Pos
+      | Neg, Top -> Neg
+      | Neg, Zero -> Bot
+      | Pos, Pos -> Pos
+      | Pos, Zero -> Pos
+      | Pos, Neg -> Pos
+      | Zero, Neg -> Zero
+      | Zero, Pos -> Bot
+      | Zero, Zero -> Zero
+      | Zero, Top -> Zero
+      | Top, Zero -> Top
+      | Top, Pos -> Pos
+      | Top, Neg -> Top
+      | Top, Top -> Top
+      )
+    | Llvm.Icmp.Ule | Llvm.Icmp.Sle ->
+      (match (v1, v2) with
+      | Bot, _ -> Bot
+      | _, Bot -> Bot
+      | Neg, Zero -> Neg
+      | Neg, Pos -> Neg
+      | Neg, Neg -> Neg
+      | Pos, Pos -> Pos
+      | Pos, Top -> Pos
+      | Neg, Top -> Neg
+      | Pos, Zero -> Bot
+      | Pos, Neg -> Bot
+      | Top, Pos -> Top
+      | Zero, Neg -> Bot
+      | Zero, Zero -> Zero
+      | Zero, Top -> Zero
+      | Zero, Pos -> Zero
+      | Top, Zero -> Top
+      | Top, Neg -> Neg
+      | Top, Top -> Top
+      )
 
   let pp fmt = function
     | Bot -> Format.fprintf fmt "Bot"
@@ -183,29 +472,46 @@ module Taint : VALUE_DOMAIN = struct
 
   let top = Taint
 
-  let of_int _ = failwith "Not implemented"
+  let of_int _ = None
 
-  let of_src = failwith "Not implemented"
+  let of_src = Taint
 
-  let of_sanitizer = failwith "Not implemented"
+  let of_sanitizer = None
 
-  let order x y = failwith "Not implemented"
+  let order x y = match (x, y) with
+    | Taint, Taint -> true
+    | None, None -> true
+    | _ -> false
 
-  let join x y = failwith "Not implemented"
+  let join x y = match (x, y) with
+    | None, None -> None
+    | _ -> Taint
 
-  let meet x y = failwith "Not implemented"
+  let meet x y = match (x, y) with
+    | Taint, Taint -> Taint
+    | _ -> None
 
-  let add x y = failwith "Not implemented"
+  let add x y = match (x, y) with
+    | None, None -> None
+    | _ -> Taint
 
-  let sub = failwith "Not implemented"
+  let sub x y = match (x, y) with
+    | None, None -> None
+    | _ -> Taint
 
-  let mul = failwith "Not implemented"
+  let mul x y = match (x, y) with
+    | None, None -> None
+    | _ -> Taint
 
-  let div = failwith "Not implemented"
+  let div x y = match (x, y) with
+    | None, None -> None
+    | _ -> Taint
 
-  let cmp _ = failwith "Not implemented"
+  let cmp _ x y = match (x, y) with
+    | None, None -> None
+    | _ -> Taint
 
-  let filter pred v1 v2 = failwith "Not implemented"
+  let filter pred v1 v2 = v1
 
   let pp fmt = function
     | None -> Format.fprintf fmt "Bot"
@@ -229,9 +535,26 @@ module Memory (Value : VALUE_DOMAIN) :
 
   let find x m = try M.find x m with Not_found -> Value.bottom
 
-  let order m1 m2 = failwith "Not implemented"
+  let order m1 m2 = let bayraq = 1 in
+    let neyse = M.fold (fun ky vall cntt ->
+                        if Value.order vall (find ky m2) then (1*cntt)
+                        else (0*cntt)
+                        ) m1 bayraq in
+    if neyse = 0 then false
+    else 
+      true
 
-  let join m1 m2 = failwith "Not implemented"
+  let join m1 m2 = 
+    if M.is_empty m1 then m2
+      else if M.is_empty m2 then m1
+      else
+        let fst = M.fold (fun ky vall cntt ->
+                              M.add ky (Value.join vall (find ky m2)) cntt) m1 (M.empty) in
+        M.fold (fun ky vall cntt ->
+                  if find ky cntt = Value.bottom then
+                    M.add ky vall cntt
+                  else
+                    cntt) m2 fst
 
   let meet _ _ = failwith "NOTE: We do not use meet"
 

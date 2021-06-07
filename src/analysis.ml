@@ -6,7 +6,21 @@ module Make (Memory : D.MEMORY_DOMAIN) = struct
   module Table = Domain.Table (Semantics.Memory)
   module Memory = Semantics.Memory
 
-  let run llctx table = failwith "Not implemented"
+  let rec run llctx table = 
+    let hash, bayraq =
+      Table.fold (fun key value acc ->
+                    let prevs = D.Graph.pred key in
+                    let fhash = List.fold_left (fun acc node ->
+                                      let memo = Semantics.transfer_node llctx node (Table.find node table) in
+                                      Memory.join memo acc) Memory.bottom prevs in
+                    if Memory.order fhash value = true then (fst (acc), (snd acc) * 1)
+                    else
+                      let temp = fst acc in
+                      let temp = Table.add key fhash temp in
+                      (temp, (snd acc) * 0)
+                  ) table (table, 1) in
+    if bayraq = 1 then hash
+    else run llctx hash
 
   let check_instr llctx instr memory =
     match Llvm.instr_opcode instr with

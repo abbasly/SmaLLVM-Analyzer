@@ -1,0 +1,143 @@
+(rule
+ (deps sign_simple_sub.ll)
+ (action
+  (with-stdout-to
+   sign_simple_sub.output
+   (run ../../analyzer sign sign_simple_sub.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff sign_simple_sub.expected sign_simple_sub.output)))
+
+(rule
+ (deps sign_simple_mul.ll)
+ (action
+  (with-stdout-to
+   sign_simple_mul.output
+   (run ../../analyzer sign sign_simple_mul.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff sign_simple_mul.expected sign_simple_mul.output)))
+
+(rule
+ (deps sign_simple_loop.ll)
+ (action
+  (with-stdout-to
+   sign_simple_loop.output
+   (run ../../analyzer sign sign_simple_loop.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff sign_simple_loop.expected sign_simple_loop.output)))
+
+(rule
+ (deps sign_simple_if_else.ll)
+ (action
+  (with-stdout-to
+   sign_simple_if_else.output
+   (run ../../analyzer sign sign_simple_if_else.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff sign_simple_if_else.expected sign_simple_if_else.output)))
+
+(rule
+ (deps sign_simple_error.ll)
+ (action
+  (with-stdout-to
+   sign_simple_error.output
+   (run ../../analyzer sign sign_simple_error.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff sign_simple_error.expected sign_simple_error.output)))
+
+(rule
+ (deps sign_simple_safe.ll)
+ (action
+  (with-stdout-to
+   sign_simple_safe.output
+   (run ../../analyzer sign sign_simple_safe.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff sign_simple_safe.expected sign_simple_safe.output)))
+
+(rule
+ (deps taint_simple1.ll)
+ (action
+  (with-stdout-to
+   taint_simple1.output
+   (run ../../analyzer taint taint_simple1.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff taint_simple1.expected taint_simple1.output)))
+
+(rule
+ (deps taint_simple2.ll)
+ (action
+  (with-stdout-to
+   taint_simple2.output
+   (run ../../analyzer taint taint_simple2.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff taint_simple2.expected taint_simple2.output)))
+
+(rule
+ (deps taint_simple3.ll)
+ (action
+  (with-stdout-to
+   taint_simple3.output
+   (run ../../analyzer taint taint_simple3.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff taint_simple3.expected taint_simple3.output)))
+
+(rule
+ (deps taint_simple4.ll)
+ (action
+  (with-stdout-to
+   taint_simple4.output
+   (run ../../analyzer taint taint_simple4.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff taint_simple4.expected taint_simple4.output)))
+
+(rule
+ (deps taint_simple5.ll)
+ (action
+  (with-stdout-to
+   taint_simple5.output
+   (run ../../analyzer taint taint_simple5.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff taint_simple5.expected taint_simple5.output)))
+
+(rule
+ (deps taint_simple6.ll)
+ (action
+  (with-stdout-to
+   taint_simple6.output
+   (run ../../analyzer taint taint_simple6.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff taint_simple6.expected taint_simple6.output)))

@@ -1,0 +1,95 @@
+(rule
+ (deps sign_adv1.ll)
+ (action
+  (with-stdout-to
+   sign_adv1.output
+   (run ../../analyzer sign sign_adv1.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff sign_adv1.expected sign_adv1.output)))
+
+(rule
+ (deps sign_adv2.ll)
+ (action
+  (with-stdout-to
+   sign_adv2.output
+   (run ../../analyzer sign sign_adv2.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff sign_adv2.expected sign_adv2.output)))
+
+(rule
+ (deps sign_adv3.ll)
+ (action
+  (with-stdout-to
+   sign_adv3.output
+   (run ../../analyzer sign sign_adv3.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff sign_adv3.expected sign_adv3.output)))
+
+(rule
+ (deps sign_adv4.ll)
+ (action
+  (with-stdout-to
+   sign_adv4.output
+   (run ../../analyzer sign sign_adv4.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff sign_adv4.expected sign_adv4.output)))
+
+(rule
+ (deps taint_adv1.ll)
+ (action
+  (with-stdout-to
+   taint_adv1.output
+   (run ../../analyzer taint taint_adv1.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff taint_adv1.expected taint_adv1.output)))
+
+(rule
+ (deps taint_adv2.ll)
+ (action
+  (with-stdout-to
+   taint_adv2.output
+   (run ../../analyzer taint taint_adv2.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff taint_adv2.expected taint_adv2.output)))
+
+(rule
+ (deps taint_adv3.ll)
+ (action
+  (with-stdout-to
+   taint_adv3.output
+   (run ../../analyzer taint taint_adv3.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff taint_adv3.expected taint_adv3.output)))
+
+(rule
+ (deps taint_adv4.ll)
+ (action
+  (with-stdout-to
+   taint_adv4.output
+   (run ../../analyzer taint taint_adv4.ll))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff taint_adv4.expected taint_adv4.output)))

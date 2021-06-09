@@ -1,0 +1,1 @@
+Potential Tainted-flow @ advanced/taint_adv1.c:main:16:3 (call void @sink(i32 %add2), !dbg !27)

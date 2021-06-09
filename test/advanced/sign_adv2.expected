@@ -1,0 +1,3 @@
+Potential Division-by-zero @ advanced/sign_adv2.c:main:16:27, %i.0 = Top
+Potential Division-by-zero @ advanced/sign_adv2.c:main:19:21, %call = Top
+Potential Division-by-zero @ advanced/sign_adv2.c:main:35:35, %i.1 = Top

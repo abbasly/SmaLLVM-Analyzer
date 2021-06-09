@@ -1,0 +1,4 @@
+(test
+ (name unitSignEval)
+ (libraries hwLib oUnit)
+ (modules unitSignEval))
